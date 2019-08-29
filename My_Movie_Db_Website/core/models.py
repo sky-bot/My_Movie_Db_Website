@@ -34,18 +34,32 @@ class Movie(models.Model):
         blank = True
     )
 
+    writers = models.ManyToManyField(
+        to = 'Person',
+        related_name = 'writing_credits',
+        blank = True
+    )
+
+    actors = models.ManyToManyField(
+        to = 'Person',
+        through = 'Roles',
+        related_name='acting_credits',
+        blank=True
+    )
+
     class Meta:
         ordering = ('-year', 'title')
 
     def __str__(self):
         return '{}({})'.format(self.title, self.year)
 
+
 class Person(models.Model):
     first_name = models.CharField(max_length=140)
     last_name = models.CharField(max_length=140)
 
     born = models.DateField()
-    died = models.DateField(null = True, blank=true)
+    died = models.DateField(null = True, blank=True)
 
     class Meta:
         ordering = ('last_name', 'first_name')
@@ -56,5 +70,15 @@ class Person(models.Model):
             self.born, self.died)
         return '{}, {} ({})'.format(self.last_name, self.first_name, self.born)
 
+class Roles(models.Model):
+    movie = models.ForeignKey(Movie, on_delete = models.DO_NOTHING)
+    person = models.ForeignKey(Person, on_delete = models.DO_NOTHING)
+    name = models.CharField(max_length=140)
+
+    def __str__(self):
+        return "{} {} {}".format(self.movie_id, self.person_id, self.name)
+
+    class Meta:
+        unique_together = ('movie', 'person', 'name') 
     
 
