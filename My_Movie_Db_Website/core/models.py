@@ -101,6 +101,13 @@ class Roles(models.Model):
     class Meta:
         unique_together = ('movie', 'person', 'name') 
     
+class VoteManager(models.Model):
+    def get_vote_or_unsaved_blank(self, movie, user):
+        try:
+            return Vote.objects.get(movie=movie, user=user)
+        except Vote.DoesNotExist:
+            return Vote(movie = movie, user = user)
+
 
 class Vote(models.Model):
     UP = 1
@@ -133,9 +140,3 @@ class Vote(models.Model):
     class Meta:
         unique_together = ('user','movie')
 
-class VoteManager(models.Model):
-    def get_vote_or_unsaved_blank(self, movie, user):
-        try:
-            return Vote.objects.get(movie=movie, user=user)
-        except Vote.DoesNotExist:
-            return Vote(movie = movie, user = user)

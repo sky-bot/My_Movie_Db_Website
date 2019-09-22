@@ -12,10 +12,22 @@
 {% endblock %}
 
 {% block sidebar %}
-<div>
-    This movie is rated:
+    <div>
+        This movie is rated:
         <span class="badge badge-primary">
             {{ object.get_rating_display }}
         </span>
-</div>
+    </div>
+
+    <div>
+        {% if vote_form %}
+            <form method="POST" action="{{ vote_form_url }}">
+                {% csrf_token %}
+                {{ vote_form.as_p }}
+                <button class="btn btn-primary">Vote</button>
+            </form>
+        {% else %}
+         <p>LogIn to vote fot this Movie</p>
+        {% endif %}
+    </div>
 {% endblock %}
