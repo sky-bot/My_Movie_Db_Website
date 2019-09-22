@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django import forms
+
 # Create your models here.
 class MovieManager(models.Manager):
 
@@ -126,5 +128,14 @@ class Vote(models.Model):
         auto_now=True
     )
 
+    objects = VoteManager()
+    
     class Meta:
         unique_together = ('user','movie')
+
+class VoteManager(models.Model):
+    def get_vote_or_unsaved_blank(self, movie, user):
+        try:
+            return Vote.objects.get(movie=movie, user=user)
+        except Vote.DoesNotExist:
+            return Vote(movie = movie, user = user)
